@@ -1,6 +1,6 @@
 import type { Request } from "express";
 import jwt from "jsonwebtoken";
-import { GraphQLError } from "graphql";
+//import { GraphQLError } from "graphql";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -35,9 +35,12 @@ export const signToken = (username: string, email: string, _id: unknown) => {
   const secretKey: any = process.env.JWT_SECRET_KEY;
   return jwt.sign({ data: payload }, secretKey, { expiresIn: "2h" });
 };
+
+/*
 export class AuthenticationError extends GraphQLError {
   constructor(message: string) {
     super(message, undefined, undefined, undefined, ["UNAUTHENTICATED"]);
     Object.defineProperty(this, "name", { value: "AuthenticationError" });
   }
 }
+  */
