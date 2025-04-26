@@ -1,20 +1,28 @@
 import { useState } from 'react';
+import { useMutation } from '@apollo/client';
 import type { ChangeEvent, FormEvent } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-import { createUser } from '../utils/API';
 import Auth from '../utils/auth';
+// import { createUser } from '../utils/API';
+import { ADD_USER } from '../utils/mutations';
+
 import type { User } from '../models/User';
 
-// biome-ignore lint/correctness/noEmptyPattern: <explanation>
-const SignupForm = ({}: { handleModalClose: () => void }) => {
+const SignupForm = ({handleModalClose}: { handleModalClose: () => void }) => {
+  const [addUser] = useMutation(ADD_USER);
   // set initial form state
-  const [userFormData, setUserFormData] = useState<User>({ username: '', email: '', password: '', savedBooks: [] });
+  const [userFormData, setUserFormData] = useState<User>({
+    username: '',
+    email: '',
+    password: '',
+    savedBooks: []
+  });
   // set state for form validation
-  const [validated] = useState(false);
+  const [validated, setValidated] = useState(false);
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
-
+ 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
@@ -26,19 +34,30 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
+      // event.preventDefault();
+      setValidated(true);
       event.stopPropagation();
+      return;
     }
 
     try {
-      const response = await createUser(userFormData);
+      // const response = await createUser(userFormData);
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      // if (!response.ok) {
+      //   throw new Error("something went wrong!");
+      // }
 
-      const { token } = await response.json();
-      Auth.login(token);
+      // const { token } = await response.json();
+      const { data } = await addUser({
+        variables: {
+          username: userFormData.username,
+          email: userFormData.email,
+          password: userFormData.password
+        }
+      });
+
+      Auth.login(data.addUser.token);
+      handleModalClose(); // close the modal after signup success
     } catch (err) {
       console.error(err);
       setShowAlert(true);
@@ -48,7 +67,7 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
       username: '',
       email: '',
       password: '',
-      savedBooks: [],
+      savedBooks:[],
     });
   };
 
