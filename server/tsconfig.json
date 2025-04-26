@@ -9,5 +9,10 @@
     // "noEmitOnError": true /* Disable emitting files if any type checking errors are reported. */
   },
   "include": ["src"],
+  "exclude": [
+        "./plugins/**/*",
+        "./typings/**/*",
+        "./dist/**/*" // This is what fixed it!
+    ],
   "typeRoots": ["./node_modules/@types", "./src/types"]
 }
