@@ -1,6 +1,8 @@
 import type { User } from '../models/User.js';
 import type { Book } from '../models/Book.js';
 
+
+// --> we are moving to this --> '/graphql' route
 // route to get logged in user's info (needs the token)
 export const getMe = (token: string) => {
   return fetch('/api/users/me', {
